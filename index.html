@@ -75,11 +75,18 @@
 		  <h1>Search</h1>
 		  <p>Find countries to chart by typing in the box below</p>
 		  <p>Click add to add a country to your list</p>
+		  <p>Click chart to chart the countries in your list</p>
 		  <input id="country" list="countries" class="mdc-text-field__input"> 
 		  <datalist id="countries"></datalist>
 		  <button id="add" class="mdc-button mdc-button--raised">
 			  <div class="mdc-button__ripple"></div>
 			  <span class="mdc-button__label">Add</span>
+		  </button>
+		  <div id="usersCountries"></div>
+		  <button id="chart" class="mdc-button mdc-button--raised">
+			  <div class="mdc-button__ripple"></div>
+			  <span class="mdc-button__label">Chart</span>
+			  
 		  </button>
 		  
 	  </div>
@@ -97,12 +104,13 @@
   </main>
 
 
-  <script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"> </script>
+    <script>
     mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('header.mdc-top-app-bar'));
 
     const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
-	const endpoint =  "https://pomber.github.io/covid19/timeseries.json"; 
-	const countriesList = [];
+	const covidEndpoint =  "https://pomber.github.io/covid19/timeseries.json"; 
+	const countriesToChart = [];
 	let data;
 	  
 	  
@@ -121,26 +129,32 @@
 		  return false;
 	  }
 	  
-	  window.addEventListener('load',() => {
-		  fetch(endpoint)
-			  .then(response => response.json())
-			  .then(json => {
-			  		data = json;
-			  		for(i in data){
-						let c = document.createElement("c");
-						c.value = i;
-						document.querySelector("#countries").appendChild(c);
-					}
-		  })
-	  });
+
+      document.querySelector("#add")
+        .addEventListener("click",(e) => {
+          let countryName = document.querySelector("#country").value;
+          countriesToChart.push(countryName);
+		  document.querySelector("#usersCountries")
+		  .textContent = countriesToChart.toString();
+        });
+
 	  
-	  const addCountry = (country) => {
-		  countriesList.push(country);
-		  document.querySelector("#selectedCountries").textContent = countriesList.toString();
-	  }
-	  
-	  
-	  
+      window.addEventListener("load",() => {
+        fetch(covidEndpoint)
+          .then (response => response.json())
+          .then (json => {
+            data = json;
+			
+			for(i in data){
+				let option = document.createElement("option");
+				option.value = i;
+				document.querySelector("#countries").appendChild(option);
+			}
+          })
+
+      });
+  
+
     </script>
   </body>
 </html>
