@@ -109,8 +109,8 @@
     mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('header.mdc-top-app-bar'));
 
     const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
-	const covidEndpoint =  "https://pomber.github.io/covid19/timeseries.json"; 
-	const countriesToChart = [];
+	const endpoint =  "https://pomber.github.io/covid19/timeseries.json"; 
+	const countriesList = [];
 	let data;
 	  
 	  
@@ -133,14 +133,14 @@
       document.querySelector("#add")
         .addEventListener("click",(e) => {
           let countryName = document.querySelector("#country").value;
-          countriesToChart.push(countryName);
+          countriesList.push(countryName);
 		  document.querySelector("#usersCountries")
-		  .textContent = countriesToChart.toString();
+		  .textContent = countriesList.toString();
         });
 
 	  
       window.addEventListener("load",() => {
-        fetch(covidEndpoint)
+        fetch(endpoint)
           .then (response => response.json())
           .then (json => {
             data = json;
