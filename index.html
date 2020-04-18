@@ -78,12 +78,12 @@
 		  <p>Click chart to chart the countries in your list</p>
 		  <input id="country" list="countries" class="mdc-text-field__input"> 
 		  <datalist id="countries"></datalist>
-		  <button id="add" class="mdc-button mdc-button--raised">
+		  <button id="addButton" class="mdc-button mdc-button--raised">
 			  <div class="mdc-button__ripple"></div>
 			  <span class="mdc-button__label">Add</span>
 		  </button>
 		  <div id="usersCountries"></div>
-		  <button id="chart" class="mdc-button mdc-button--raised">
+		  <button id="chartButton" class="mdc-button mdc-button--raised">
 			  <div class="mdc-button__ripple"></div>
 			  <span class="mdc-button__label">Chart</span>
 			  
@@ -92,8 +92,9 @@
 	  </div>
 	  
 	  <div class="viewHidden" id="Table">
-	  	 Content of Table
-		  
+		  <div class= "mdc-data-table" id="divTable">
+			  
+		  </div>	  
 	  </div>
 	  
 	  <div class="viewHidden" id="Chart">
@@ -130,7 +131,7 @@
 	  }
 	  
 
-      document.querySelector("#add")
+      document.querySelector("#addButton")
         .addEventListener("click",(e) => {
           let countryName = document.querySelector("#country").value;
           countriesList.push(countryName);
@@ -153,6 +154,110 @@
           })
 
       });
+		
+		
+	  const generateTable = () =>{
+		  var divTable = document.querySelector("#divTable");
+		  var tbl = document.createElement("table");
+		  tbl.setAttribute("class", "mdc-data-table__table");
+		  var tblBody = document.createElement("tbody");
+		  tblBody.setAttribute("class", "mdc-data-table__content");
+		  var tblHead = document.createElement("thead");
+		  var firstRowHeader = document.createElement("th");
+		  firstRowHeader.setAttribute("class", "mdc-data-table__header-cell");
+		  var headCellOne = document.createTextNode("date");
+		  firstRowHeader.appendChild(headCellOne);
+		  tblHead.appendChild(firstRowHeader);
+		  
+		  
+		  debugger;
+		  for(var k = 0; k < countriesList.length; k++){
+			  var headerCountry = document.createElement("th");
+			  headerCountry.setAttribute("class","mdc-data-table__header-cell");
+			  var countryText = document.createTextNode(countriesList[k]);
+			  headerCountry.appendChild(countryText);
+			  tblHead.appendChild(headerCountry);
+			  
+		  }
+		  
+		  
+		  var rows = [];
+		  var counter = 0;
+		  // creating all cells
+		 
+			for(var z = 0; z < data[countriesList[0]].length; z++){
+				var bodyRow = document.createElement("tr");
+				bodyRow.setAttribute("class", "mdc-data-table__row");
+				var selectedData = data[countriesList[0]];
+				
+				var cell = document.createElement("td");	
+			    cell.setAttribute("class", "mdc-data-table__cell");
+				var cellText = document.createTextNode(selectedData[z.toString()].date);
+				cell.appendChild(cellText);
+				bodyRow.appendChild(cell);
+
+				var countryCell = document.createElement("td");
+				countryCell.setAttribute("class", "mdc-data-table__cell");
+				var countryCellText = document.createTextNode(selectedData[z.toString()].recovered);
+				countryCell.appendChild(countryCellText);
+				bodyRow.appendChild(countryCell);
+				
+				
+				rows.push(bodyRow);
+				
+			} 
+		  
+			for(var a = 1; a < countriesList.length; a++){
+				for(var z = 0; z < data[countriesList[a]].length; z++){
+					var selectedData = data[countriesList[a]];
+					var countryCell = document.createElement("td");
+					countryCell.setAttribute("class", "mdc-data-table__cell");
+					var countryCellText = document.createTextNode(selectedData[z.toString()].recovered);
+					countryCell.appendChild(countryCellText);
+					rows[z].appendChild(countryCell);
+
+
+
+				} 
+			}
+		  
+			
+		  	for(var y = 0; y < rows.length; y++){
+				tblBody.appendChild(rows[y]);
+			}
+		  
+		  
+		  
+		  /*
+			for (var j = 0; j < 2; j++) {
+			  // Create a <td> element and a text node, make the text
+			  // node the contents of the <td>, and put the <td> at
+			  // the end of the table row
+			  var cell = document.createElement("td");	
+			  cell.setAttribute("class", "mdc-data-table__cell");
+			  var cellText = document.createTextNode("cell in row "+i+", column "+j);
+			  cell.appendChild(cellText);
+			  row.appendChild(cell);
+			}
+
+		  tblBody.appendChild(row);
+		  }
+		  */
+		  
+		  tbl.appendChild(tblHead);
+		  tbl.appendChild(tblBody);
+		  divTable.appendChild(tbl);
+		  
+		  //alert("hello");
+		  
+	  }	
+	  
+	  document.querySelector("#chartButton")
+		  .addEventListener("click", (e) => {
+		  //alert("apple");
+		  generateTable(); 
+						   
+	   });
   
 
     </script>
