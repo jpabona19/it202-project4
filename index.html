@@ -98,8 +98,11 @@
 	  </div>
 	  
 	  <div class="viewHidden" id="Chart">
+		  <div id="divChart">
+			  
+			  
+		  </div>
 		  Content of Chart
-		  
 	  </div>
 	  
   </main>
@@ -108,6 +111,10 @@
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"> </script>
     <script>
     mdc.topAppBar.MDCTopAppBar.attachTo(document.querySelector('header.mdc-top-app-bar'));
+		
+	google.charts.load('current', {'packages':['corechart']});
+	
+		
 
     const drawer = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer'));
 	const endpoint =  "https://pomber.github.io/covid19/timeseries.json"; 
@@ -115,12 +122,13 @@
 	let data;
 	  
 	  
-
+	//handles side menu
     document.querySelector(".mdc-top-app-bar__navigation-icon")
       .addEventListener("click", 
           (e) => {drawer.open = true;}
       );
 	  
+	  //handles which screen to show	
 	  const showScreen = (shown, hidden1, hidden2, hidden3) => {
 		  document.querySelector(shown).setAttribute("class", "viewShown");
 		  document.querySelector(hidden1).setAttribute("class", "viewHidden");
@@ -130,7 +138,8 @@
 		  return false;
 	  }
 	  
-
+	  
+	  
       document.querySelector("#addButton")
         .addEventListener("click",(e) => {
           let countryName = document.querySelector("#country").value;
@@ -140,6 +149,7 @@
         });
 
 	  
+	 //fetch data from json	
       window.addEventListener("load",() => {
         fetch(endpoint)
           .then (response => response.json())
@@ -155,8 +165,8 @@
 
       });
 		
-		
-	  const generateTable = () =>{
+	//creates table	
+	  const generateTable = () =>{ 
 		  var divTable = document.querySelector("#divTable");
 		  var tbl = document.createElement("table");
 		  tbl.setAttribute("class", "mdc-data-table__table");
@@ -169,8 +179,8 @@
 		  firstRowHeader.appendChild(headCellOne);
 		  tblHead.appendChild(firstRowHeader);
 		  
-		  
-		  debugger;
+	
+		  //create first row of column headers
 		  for(var k = 0; k < countriesList.length; k++){
 			  var headerCountry = document.createElement("th");
 			  headerCountry.setAttribute("class","mdc-data-table__header-cell");
@@ -207,6 +217,7 @@
 				
 			} 
 		  
+		  //enters case numbers in cells
 			for(var a = 1; a < countriesList.length; a++){
 				for(var z = 0; z < data[countriesList[a]].length; z++){
 					var selectedData = data[countriesList[a]];
@@ -228,35 +239,68 @@
 		  
 		  
 		  
-		  /*
-			for (var j = 0; j < 2; j++) {
-			  // Create a <td> element and a text node, make the text
-			  // node the contents of the <td>, and put the <td> at
-			  // the end of the table row
-			  var cell = document.createElement("td");	
-			  cell.setAttribute("class", "mdc-data-table__cell");
-			  var cellText = document.createTextNode("cell in row "+i+", column "+j);
-			  cell.appendChild(cellText);
-			  row.appendChild(cell);
-			}
-
-		  tblBody.appendChild(row);
-		  }
-		  */
-		  
 		  tbl.appendChild(tblHead);
 		  tbl.appendChild(tblBody);
 		  divTable.appendChild(tbl);
 		  
-		  //alert("hello");
-		  
 	  }	
+	  
+	  
+	  //creates line chart
+	  const generateChart = () => {
+		let chartInfo = [];
+	
+        let datesAxis = ["date"];
+        for (let i of countriesList) {
+          datesAxis.push(i);
+        }
+		//creates array for chart with data
+        chartInfo.push(datesAxis);
+		
+        for (let j = 0; j < data[countriesList[0]].length; j++) {
+          let rows = [];
+          rows.push(data[countriesList[0]][j]["date"]);
+          
+          for (let k of countriesList){
+            rows.push(data[k][j]["recovered"]);
+          }
+          chartInfo.push(rows); 
+        }
+        
+
+        var dataArray = google.visualization.arrayToDataTable(chartInfo);
+		  
+		//format of chart  
+        var chartFormat = {
+          title: 'Line Chart of Recovered Cases',
+          width: window.innerWidth * .7,
+          height: window.innerHeight * .7,
+          legend: { 
+			  position: 'side' 
+		  },
+		  hAxis: {
+			  title: "Dates",
+			  slantedText: true
+		  },
+		  vAxis:{
+			title:"Cases",
+		  }
+       	 };
+
+        var graph = new google.visualization.LineChart(document.querySelector('#Chart'));
+
+        graph.draw(dataArray, chartFormat);
+		  
+		  
+	  }
+	  
+	  
+	  
 	  
 	  document.querySelector("#chartButton")
 		  .addEventListener("click", (e) => {
-		  //alert("apple");
 		  generateTable(); 
-						   
+		  generateChart();	   
 	   });
   
 
